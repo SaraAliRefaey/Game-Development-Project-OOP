@@ -1,24 +1,28 @@
-#include <iostream>
+﻿#include <iostream>
 #include <string>
 #include <vector>
+#include <limits> // Needed for numeric_limits in robust input
 #include "BoardGame_Classes.h"
 #include "NumericalTTT_Board.h"
 #include "NumericalTTT_Move.h"
 #include "NumericalTTT_Player.h"
-#include "TTT_5X5_Classes.h" 
+#include "TTT_5X5_Classes.h"
 #include "Word_TTT_Classes.h"
-#include "Infinity_Tic_Tac_Toe.h"
+#include "ObstacleTTT_Board.h" // Your new board class
 
 using namespace std;
 
+// Function to run Numerical Tic Tac Toe (kept for reference)
 void run_numerical_ttt() {
+
     NumericalTTT_Board board;
 
+    // Note: Assuming NumericalTTT_Player and Move are defined in your existing files
     NumericalTTT_Player player1(1, true);
     NumericalTTT_Player player2(2, true);
 
     Move<int> move(0, 0, 0);
-    cout << "Welcome to Numerical Tic Tac Toe! " << endl;
+    cout <<"Welcome to Numerical Tic Tac Toe! " << endl;
     board.display_board();
 
     while (!board.game_is_over(&player1) && !board.game_is_over(&player2)) {
@@ -50,7 +54,9 @@ void run_numerical_ttt() {
     }
 }
 
+// Game 2 : 5x5 Tic Tac Toe
 void run_5x5_ttt() {
+    // Note: This relies on your existing TTT_5X5_Classes.h/cpp files
     TicTacToe5x5_Board* board = new TicTacToe5x5_Board();
     TicTacToe5x5_UI* ui = new TicTacToe5x5_UI();
 
@@ -64,50 +70,94 @@ void run_5x5_ttt() {
     delete[] players;
 }
 
+// Game 3 : Word Tic Tac
 void run_word_ttt() {
+
     WordTicTacToe_Board* board = new WordTicTacToe_Board();
     WordTicTacToe_UI* ui = new WordTicTacToe_UI();
 
+
     Player<char>** players = ui->setup_players();
+
 
     GameManager<char> manager(board, players, ui);
     manager.run();
+
 
     delete board;
     delete ui;
     delete[] players;
 }
 
-void run_infinity_ttt() {
-    Player<char>* players[2];
-    players[0] = new Player<char>("Player 1", 'X', PlayerType::HUMAN);
-    players[1] = new Player<char>("Player 2", 'O', PlayerType::HUMAN);
+void run_obstacle_ttt() {
 
-    Board<char>* board = new Infinity_Tic_Tac_Toe();
-    Infinity_UI* ui = new Infinity_UI();
+    ObstacleTTT_Board board;
 
-    GameManager<char> game(board, players, ui);
-    game.run();
 
-    delete board;
-    delete ui;
-    delete players[0];
-    delete players[1];
+    Player<char> player1("Player X", 'X', PlayerType::HUMAN);
+    Player<char> player2("Player O", 'O', PlayerType::HUMAN);
+
+    Player<char>* players[] = {&player1, &player2};
+    int turn = 0;
+
+    cout << "Welcome to 6x6 Obstacles Tic Tac Toe! Get 3-in-a-row to win.\n";
+    cout << "6 Obstacles ('#') are placed randomly and cannot be used.\n";
+    board.display_board();
+
+    Move<char> move(0, 0, ' ');
+
+    while (true) {
+        Player<char>* currentPlayer = players[turn];
+        int x = -1, y = -1;
+        bool valid_move = false;
+
+
+        while (!valid_move) {
+            cout << "\n" << currentPlayer->get_name() << " (" << currentPlayer->get_symbol() << ") Turn. Enter your move (row and column): ";
+
+            if (!(cin >> x >> y)) {
+                cout << "Invalid input format. Please enter two numbers (row and column).\n";
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                continue;
+            }
+
+            move = Move<char>(x, y, currentPlayer->get_symbol());
+            valid_move = board.update_board(&move);
+        }
+
+        board.display_board();
+
+        if (board.is_win(currentPlayer)) {
+            cout << "\n*** " << currentPlayer->get_name() << " wins! ***" << endl;
+            return;
+        }
+
+        if (board.is_draw(currentPlayer)) {
+            cout << "\n*** It's a draw! ***" << endl;
+            return;
+        }
+
+        turn = 1 - turn;
+    }
 }
 
+
 int main() {
-    int choice;
+    int choice ;
 
     do {
-        cout << "\nWelcome to the Board Games Collection (OOP Project)\n";
-        cout << "=======================================================\n";
-        cout << "1. Play Numerical Tic Tac Toe\n";
-        cout << "2. Play 5x5 Tic Tac Toe\n";
-        cout << "3. Play Word Tic Tac Toe\n";
-        cout << "4. Play Infinity Tic Tac Toe\n";
-        cout << "5. Exit\n";
+
+        cout << "  Welcome to the Board Games Collection (OOP Project) " <<endl;
+        cout << "=======================================================" << endl;
+        cout << "1. Play Numerical Tic Tac Toe (Group Game)" << endl;
+        cout << "2. Play 5x5 Tic Tac Toe (Sara Game 3)" << endl;
+        cout << "3. Play Word Tic Tac Toe (Sara Game 4 )" << endl;
+        cout << "4. PLay Obstacles Tic-Tac-Toe (Group Game 10)" << endl; // Updated menu
+        cout << "5. Exit" << endl;
         cout << "Enter your choice: ";
         cin >> choice;
+
 
         switch (choice) {
         case 1:
@@ -119,14 +169,20 @@ int main() {
         case 3:
             run_word_ttt();
             break;
-        case 4:
-            run_infinity_ttt();
+        case 4: // New case to run the Obstacles game
+            run_obstacle_ttt();
             break;
         case 5:
-            cout << "Goodbye!...\n";
+            cout << "Exiting program. Goodbye!\n";
             break;
         default:
             cout << "Invalid choice. Please try again.\n";
+        }
+
+        // This cin.ignore and cin.fail() check helps clear the buffer for next input.
+        if (cin.fail()) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
         }
 
     } while (choice != 5);
