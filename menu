@@ -1,0 +1,120 @@
+#include <iostream>
+#include "BoardGame_Classes.h"
+
+// ====== Include all games ======
+#include "XO_Classes.h"
+#include "SUS_Board.h"
+#include "SUS_UI.h"
+#include "SUS_Player.h"
+#include "SUS_Move.h"
+
+#include "FIR_Game.h"
+#include "FIR_Board.h"
+#include "FIR_Player.h"
+
+#include "Infinity_Tic_Tac_Toe.h"
+
+#include "NumericalTTT_Board.h"
+#include "NumericalTTT_Player.h"
+#include "NumericalTTT_Move.h"
+#include "NumericalTTT_UI.h"
+
+#include "ObstacleTTT_Board.h"
+
+#include "TTT_5x5_Classes.h"
+
+#include "Word_TTT_Classes.h"
+
+using namespace std;
+
+// ================= MENU =================
+
+void printMenu() {
+    cout << "\n====================================\n";
+    cout << "1. XO Game (Tic Tac Toe)\n";
+    cout << "2. SUS Game\n";
+    cout << "3. Four-in-a-Row\n";
+    cout << "4. Infinity Tic Tac Toe\n";
+    cout << "5. Numerical Tic Tac Toe\n";
+    cout << "6. Obstacle Tic Tac Toe\n";
+    cout << "7. Tic Tac Toe 5x5\n";
+    cout << "8. Word Tic Tac Toe\n";
+    cout << "9. Exit\n";
+    cout << "====================================\n";
+    cout << "Enter choice: ";
+}
+
+int main() {
+    int choice;
+
+    while (true) {
+        printMenu();
+        cin >> choice;
+
+        if (choice == 1) {
+            cout << "\nStarting XO Game...\n";
+            XO_Game game;
+            game.run();
+        }
+
+        else if (choice == 2) {
+            cout << "\nStarting SUS Game...\n";
+            SUS_Board* board = new SUS_Board();
+            Player<char>* p1 = new SUS_Player("Player1", 'S', PlayerType::HUMAN);
+            Player<char>* p2 = new SUS_Player("Player2", 'U', PlayerType::HUMAN);
+            Player<char>* players[2] = { p1, p2 };
+            SUS_UI* ui = new SUS_UI();
+
+            GameManager<char> gm(board, players, ui);
+            gm.run();
+
+            delete board; delete p1; delete p2; delete ui;
+        }
+
+        else if (choice == 3) {
+            cout << "\nStarting Four-in-a-Row...\n";
+            FIR_Game game;
+            game.run();
+        }
+
+        else if (choice == 4) {
+            cout << "\nStarting Infinity Tic Tac Toe...\n";
+            Infinity_Tic_Tac_Toe game;
+            game.run();
+        }
+
+        else if (choice == 5) {
+            cout << "\nStarting Numerical Tic Tac Toe...\n";
+            NumericalTTT_Game game;
+            game.run();
+        }
+
+        else if (choice == 6) {
+            cout << "\nStarting Obstacle Tic Tac Toe...\n";
+            ObstacleTTT_Game game;
+            game.run();
+        }
+
+        else if (choice == 7) {
+            cout << "\nStarting Tic Tac Toe 5x5...\n";
+            TTT5x5_Game game;
+            game.run();
+        }
+
+        else if (choice == 8) {
+            cout << "\nStarting Word Tic Tac Toe...\n";
+            WordTTT_Game game;
+            game.run();
+        }
+
+        else if (choice == 9) {
+            cout << "Goodbye!\n";
+            break;
+        }
+
+        else {
+            cout << "Invalid choice. Try again.\n";
+        }
+    }
+    return 0;
+}
