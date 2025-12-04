@@ -25,6 +25,9 @@
 
 #include "Word_TTT_Classes.h"
 
+#include "Four_by_Four_Tic_Tac_Toe.h"
+#include "Pyramid_X_O.h"
+
 using namespace std;
 
 // ================= MENU =================
@@ -39,7 +42,9 @@ void printMenu() {
     cout << "6. Obstacle Tic Tac Toe\n";
     cout << "7. Tic Tac Toe 5x5\n";
     cout << "8. Word Tic Tac Toe\n";
-    cout << "9. Exit\n";
+    cout << "9. 4x4 Tic Tac Toe\n";
+    cout << "10. Pyramid Tic Tac Toe\n";
+    cout << "11. Exit\n";
     cout << "====================================\n";
     cout << "Enter choice: ";
 }
@@ -106,8 +111,36 @@ int main() {
             WordTTT_Game game;
             game.run();
         }
-
         else if (choice == 9) {
+            cout << "\nStarting 4x4 Tic Tac Toe...\n";
+            Player<char>* players[2];
+            players[0] = new Player<char>("Player 1", 'X', PlayerType::HUMAN);
+            players[1] = new Player<char>("Player 2", 'O', PlayerType::HUMAN);
+
+            Board<char>* board = new Four_by_Four_Board();
+            Four_by_Four_UI* ui = new Four_by_Four_UI();
+
+            GameManager<char> game(board, players, ui);
+            game.run();
+
+            delete board; delete ui; delete players[0]; delete players[1];
+        }
+        else if (choice == 10) {
+            cout << "\nStarting Pyramid Tic Tac Toe...\n";
+            Player<char>* players[2];
+            players[0] = new Player<char>("Player 1", 'X', PlayerType::HUMAN);
+            players[1] = new Player<char>("Player 2", 'O', PlayerType::HUMAN);
+
+            Board<char>* board = new Pyramid_X_O_Board();
+            Pyramid_X_O_UI* ui = new Pyramid_X_O_UI();
+
+            GameManager<char> game(board, players, ui);
+            game.run();
+
+            delete board; delete ui; delete players[0]; delete players[1];
+        }
+
+        else if (choice == 11) {
             cout << "Goodbye!\n";
             break;
         }
